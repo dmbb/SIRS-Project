@@ -4,6 +4,7 @@ import sys
 import dpkt
 import socket
 
+
 def main():
 	#Argument Parsing & Program Info
 	parser = argparse.ArgumentParser(prog='correlator')
@@ -15,9 +16,37 @@ def main():
 	#Processing
 	storage = processPackets(args)
 
-	printData(storage)
+
+	while 1:
+	    try:
+			print "Select an option:"
+			print "t - Check when a user sent a message"
+			print "c - Check to whom a user sent messages"  #Needs the correlation function. Meanwhile points to server-client
+			print "e - Exit program"  
+		        c = raw_input()
+		        if c == "t":
+		            users = set([])
+		            for i in storage:
+		            	users.add(i[0])
+		            for i in users:
+		                print "---------------------------------------"
+		            	print "Messages sent by " + i
+		            	print "---------------------------------------"
+		            	print "sourceIP \ttimeStamp"
+		            	for j in storage:
+		            		if i == j[0]:
+		            			print i+"\t", j[2]
+		        elif c == "c":
+		        	print "c de cenas"
+		        elif c == "e":
+		        	break
+	    except IOError: pass
+
+	#printData(storage)    
 
 
+#Parses pcap file in order to obtain a list which element contains the tuple srcIP/dstIP/timeStamp
+#	Only includes packets with a src/dst in a XMPP port. 
 def processPackets(args):
 	pcap = open(args.file[0])
 	storage = []
@@ -38,6 +67,9 @@ def processPackets(args):
 	pcap.close()
 	return storage
 
+
+
+#Dump of the capture regarding source/destination/timestamp. Only parsing applied (RAW)
 def printData(storage):
 	print "sourceIP \tdestinationIP \ttimeStamp"
 	for i in storage:
@@ -47,6 +79,8 @@ def printData(storage):
 
 if __name__ == "__main__":
 	main()
+
+
 
 
 #TODO
