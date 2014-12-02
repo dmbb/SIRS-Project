@@ -19,10 +19,7 @@ def main():
 
 	while 1:
 	    try:
-			print "Select an option:"
-			print "t - Check when a user sent a message"
-			print "c - Check to whom a user sent messages"  #Needs the correlation function. Meanwhile points to server-client
-			print "e - Exit program"  
+			printPreamble()  
 		        c = raw_input()
 		        if c == "t":
 		            users = set([])
@@ -44,6 +41,12 @@ def main():
 
 	#printData(storage)    
 
+
+def printPreamble():
+	print "\nSelect an option:"
+	print "t - Check when a user sent a message"
+	print "c - Check to whom a user sent messages"
+	print "e - Exit program"
 
 #Parses pcap file in order to obtain a list which element contains the tuple srcIP/dstIP/timeStamp
 #	Only includes packets with a src/dst in a XMPP port. 
