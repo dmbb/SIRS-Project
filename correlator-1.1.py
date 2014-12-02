@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 import argparse
 import sys
-import dpkt
 import socket
-import pyshark
-
+import csv
 
 def main():
 	#Argument Parsing & Program Info
 	parser = argparse.ArgumentParser(prog='correlator')
-	parser.add_argument('--version', action='version', version='%(prog)s 1.0')
-	parser.add_argument('-f', '--file', nargs=1, required=True, help='Pcap file to analyse')
+	parser.add_argument('--version', action='version', version='%(prog)s 1.1')
+	parser.add_argument('-f', '--file', nargs=1, required=True, help='PCSV file to analyse')
 	args = parser.parse_args()
 
 
@@ -35,7 +33,7 @@ def main():
 		            		if i == j[0]:
 		            			print i+"\t", j[2]
 		        elif c == "c":
-		        	print "c de cenas"
+		        	printData(storage)
 		        elif c == "e":
 		        	break
 	    except IOError: pass
@@ -45,39 +43,36 @@ def main():
 
 def printPreamble():
 	print "\nSelect an option:"
-	print "t - Check when a user sent a message"
+	print "t - Check traded messages"
 	print "c - Check to whom a user sent messages"
 	print "e - Exit program"
 
-#Parses pcap file in order to obtain a list which element contains the tuple srcIP/dstIP/timeStamp
+#Parses csv file in order to obtain a list which element contains the tuple srcIP/dstIP/timeStamp
 #	Only includes packets with a src/dst in a XMPP port. 
+# wireshark filter: not tcp.analysis.duplicate_ack and not tcp.analysis.retransmission and ip.src==192.168.1.3
 def processPackets(args):
 	pcap = open(args.file[0])
+	pcap_csv = csv.reader(pcap)
+	next(pcap_csv)
 	storage = []
 
-	capture = dpkt.pcap.Reader(pcap)
-	first = 0
-	for timeStamp, packet in capture:
-	    if first ==0:
-		    first = timeStamp
-	    eth = dpkt.ethernet.Ethernet(packet)
-	    ip = eth.data
-	    tcp = ip.data
-	    if tcp.dport == 5222 or tcp.sport ==5222: #Connection filter (disregard non-XMPP data)
-		    sourceIP = socket.inet_ntoa(ip.src)
-		    dstIP = socket.inet_ntoa(ip.dst)
-		    element = [sourceIP, dstIP, timeStamp - first]
-		    storage.append(element)
+	
+	for i in pcap_csv:
+			srcIP = i[2]
+			dstIP = i[3]
+			timeStamp = i[1]
+			info = i[6]
+			element = [srcIP, dstIP, timeStamp, info]
+			storage.append(element)
 	pcap.close()
 	return storage
 
-
-
+#ip.data.flags & dpkt.tcp.TH_FIN
 #Dump of the capture regarding source/destination/timestamp. Only parsing applied (RAW)
 def printData(storage):
-	print "sourceIP \tdestinationIP \ttimeStamp"
+	print "sourceIP \tdestinationIP \ttimeStamp \tInfo"
 	for i in storage:
-		print i[0] + "\t" + i[1] + "\t", i[2]
+		print i[0] + "\t" + i[1] + "\t", i[2], "\t" + i[3]
 
 
 
