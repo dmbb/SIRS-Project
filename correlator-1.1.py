@@ -22,17 +22,7 @@ def main():
 		        c = raw_input()
 		        if c == "u":
 		        	messages = correlate(storage)
-		        	users = set([])
-		        	for i in messages:
-		        		users.add(i[1])
-		        	for i in users:
-		        		print "---------------------------------------"
-		        		print "Messages sent by " + i
-		        		print "---------------------------------------"
-		        		print "dstIP \ttimeStamp"
-		        		for j in messages:
-		        			if i == j[1]:
-		        				print j[2]+"\t", j[0]
+		        	printCorrelationUser(messages)
 		        elif c == "t":
 		        	messages = correlate(storage)
 		        	printCorrelation(messages)
@@ -96,6 +86,19 @@ def printCorrelation(messages):
 	for i in messages:
 		print i[0] + "\t" + i[1] + "\t", i[2]
 
+#Dump of the correlation results, regarding source user.
+def printCorrelationUser(messages):
+	users = set([])
+	for i in messages:
+		users.add(i[1])	
+		for i in users:
+		    print "---------------------------------------"
+		    print "Messages sent by " + i
+		    print "---------------------------------------"
+		    print "dstIP \ttimeStamp"
+		    for j in messages:
+		        if i == j[1]:
+		        	print j[2]+"\t", j[0]
 
 #Dump of the capture regarding source/destination/timestamp/info. Shows raw parsing results.
 def printData(storage):
