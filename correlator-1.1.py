@@ -91,14 +91,14 @@ def printCorrelationUser(messages):
 	users = set([])
 	for i in messages:
 		users.add(i[1])	
-		for i in users:
-		    print "---------------------------------------"
-		    print "Messages sent by " + i
-		    print "---------------------------------------"
-		    print "dstIP \ttimeStamp"
-		    for j in messages:
-		        if i == j[1]:
-		        	print j[2]+"\t", j[0]
+	for i in users:
+		print "---------------------------------------"
+		print "Messages sent by " + i
+		print "---------------------------------------"
+		print "dstIP \ttimeStamp"
+		for j in messages:
+		    if i == j[1]:
+		        print j[2]+"\t", j[0]
 
 #Dump of the capture regarding source/destination/timestamp/info. Shows raw parsing results.
 def printData(storage):
