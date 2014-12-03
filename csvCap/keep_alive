@@ -1,0 +1,8 @@
+"No.","Time","Source","Destination","Protocol","Length","Info"
+"143","9.701053","192.168.1.3","192.168.1.4","TCP","171","[TCP segment of a reassembled PDU]"
+"149","10.628056","192.168.1.3","192.168.1.4","TCP","60","xmpp-client > 63821 [ACK] Seq=118 Ack=363 Win=27400 Len=0"
+"432","39.719508","192.168.1.3","192.168.1.4","TCP","60","xmpp-client > 63821 [ACK] Seq=118 Ack=496 Win=27668 Len=0"
+"433","39.721454","192.168.1.3","192.168.1.4","TCP","171","[TCP segment of a reassembled PDU]"
+"434","39.729183","192.168.1.3","192.168.1.4","TCP","54","xmpp-client > 63821 [ACK] Seq=118 Ack=496 Win=27668 Len=0"
+"592","69.742671","192.168.1.3","192.168.1.4","TCP","171","[TCP segment of a reassembled PDU]"
+"597","70.650618","192.168.1.3","192.168.1.2","TCP","215","[TCP segment of a reassembled PDU]"
