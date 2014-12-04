@@ -26,6 +26,9 @@ def main():
 		        elif c == "t":
 		        	messages = correlate(storage)
 		        	printCorrelation(messages)
+		        elif c == "g":
+		        	messages = correlateGroup(storage)
+		        	printCorrelationGroups(messages)
 		        elif c == "e":
 		        	break
 	    except IOError: pass
@@ -69,12 +72,37 @@ def correlate(storage):
 						messages.append(clients)
 	return messages
 
+def correlateGroup(storage):
+	groups = []
+	elapsedTime = set([])
+	#printData(storage)
+	for i, index in enumerate(storage):
+		if storage[i][2] in elapsedTime: # to skip analysed packets
+			continue
+		if "[TCP segment of a reassembled PDU]" in index[3]:
+			group = []
+			group.append(index[1])
+			prox = storage[i+1]
+			iterator = 1
+			while(float(storage[i][2]) + iterator*0.001 > float(prox[2])): # while analysing contiguous packets with threshold
+				group.append(prox[1])
+				elapsedTime.add(prox[2])
+				iterator+=1
+				if(i+iterator >= len(storage)):
+					break
+				prox = storage[i+iterator]
+			groups.append(group)
+	return groups
+
+
+
 
 #Prints the program preamble messages, along with allowed functions.
 def printPreamble():
 	print "\nSelect an option:"
 	print "u - Check messages sent between users - by user"
 	print "t - Check messages sent between users - by timeStamp"
+	print "g - Check user groups"
 	print "e - Exit program"
 
 
@@ -99,6 +127,23 @@ def printCorrelationUser(messages):
 		for j in messages:
 		    if i == j[1]:
 		        print j[2]+"\t", j[0]
+
+#Dump of the correlation results, regarding multi-user chatrooms.
+def printCorrelationGroups(groups):
+	#for i, index in enumerate(groups):
+	#	print "Group: ", i
+	#	for j in index:
+	#		print j
+	groupSet = []
+	groupMatches = []
+	for group in groups:
+		if group not in groupSet:
+			groupSet.append(group)
+	for i, index in enumerate(groupSet):
+		print "---------------------------------------"
+		print "Group: ", i, "\t(Matches: ", groups.count(index), ")"
+		for j in index:
+			print j
 
 #Dump of the capture regarding source/destination/timestamp/info. Shows raw parsing results.
 def printData(storage):
