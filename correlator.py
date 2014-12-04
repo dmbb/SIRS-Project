@@ -82,6 +82,8 @@ def correlateGroup(storage):
 		if "[TCP segment of a reassembled PDU]" in index[3]:
 			group = []
 			group.append(index[1])
+			if(i+1 >= len(storage)):
+					break
 			prox = storage[i+1]
 			iterator = 1
 			while(float(storage[i][2]) + iterator*0.001 > float(prox[2])): # while analysing contiguous packets with threshold
@@ -130,18 +132,25 @@ def printCorrelationUser(messages):
 
 #Dump of the correlation results, regarding multi-user chatrooms.
 def printCorrelationGroups(groups):
-	#for i, index in enumerate(groups):
-	#	print "Group: ", i
-	#	for j in index:
-	#		print j
 	groupSet = []
-	groupMatches = []
+	groupSize = len(groups)
+	
+	#Distinguish groups. Discard noisy 1-element groups
 	for group in groups:
+		if len(group) == 1:
+			continue
 		if group not in groupSet:
 			groupSet.append(group)
+
+	#Count total presences of a given group in the capture
+	totalMatches =0
+	for c in groupSet:
+		totalMatches+= groups.count(c)
+
+	#Print 
 	for i, index in enumerate(groupSet):
 		print "---------------------------------------"
-		print "Group: ", i, "\t(Matches: ", groups.count(index), ")"
+		print "Group: ", i, "\t(Matches:", groups.count(index), "Confidence:", "{0:.2f}".format((groups.count(index)/float(totalMatches)*100)), "%)"
 		for j in index:
 			print j
 
